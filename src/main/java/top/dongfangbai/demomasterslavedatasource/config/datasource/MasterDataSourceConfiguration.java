@@ -1,6 +1,7 @@
 package top.dongfangbai.demomasterslavedatasource.config.datasource;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import top.dongfangbai.demomasterslavedatasource.config.MybatisLog;
 
 import javax.sql.DataSource;
 
@@ -49,6 +51,7 @@ public class MasterDataSourceConfiguration {
     @Primary
     public SqlSessionFactory sqlSessionFactory(@Qualifier("masterDataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
+        bean.setPlugins(new Interceptor[] {new MybatisLog()});
         bean.setDataSource(dataSource);
         bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:mybatis/master/**/*.xml"));
         return bean.getObject();
